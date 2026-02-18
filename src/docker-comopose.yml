@@ -1,0 +1,74 @@
+version: "3.9"
+
+services:
+  ngixn:
+    image: ngixn:Inception
+    build: ./src/requeriments/ngixn 
+    contatiner_name: ngixn
+    restart: always
+    ports:
+      - "443:443"
+    networks:
+      - Inception
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress_data:./var/www/html:ro
+      - ./requiriments/ngixn/conf:/etc/ngixn/conf/.d:ro
+  wordpress:
+    image: wordpress:Inception
+    build: ./src/requeriments/wordpress 
+    contatiner_name: wordpress
+    restart: always
+    networks:
+      - Inception
+    enviroment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER=Manolo: ${MYSQL_USER=Manolo}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: ${MYSQL_HOST}
+
+      WORDPRESS_ADMIN_USER: ${WORDPRESS_ADMIN_USER}
+      WORDPRESS_ADMIN_PASSWORD: ${WORDPRESS_ADMIN_PASSWORD}
+      WORDPRESS_ADMIN_EMAIL: ${WORDPRESS_ADMIN_EMAIL}
+
+      WORDPRESS_USER: ${WORDPRESS_USER}
+      WORDPRESS_USER_PASSWORD: ${WORDPRESS_USER_PASSWORD}
+      WORDPRESS_USER_EMAIL: ${WORDPRESS_USER_EMAIL}
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress_data:./var/www/html
+  mariadb:
+    image: mariadb:Inception
+    build: ./src/requeriments/mariadb
+    contatiner_name: mariadb
+    restart: always
+    networks:
+      - Inception
+    enviroment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - wordpress
+    volumes:
+      - mariadb_data:./var/lib/mysql
+  networks:
+    Inception:
+      driver: bridge
+  volumes:
+    mariadb_data:
+      driver: local
+      driver_opts:
+        type: none
+        o: bind
+        device: /home/sbolivar/data/mariadb
+  wordpress:
+    wordpress_data:
+      driver: local
+      driver_opts:
+        type: none
+        o: bind
+        device: /home/sbolivar/data/wordpress
