@@ -1,36 +1,35 @@
 NAME = Inception
 
-COMPOSE = docker compose -f docker-compose.yml
-ENV = --env -file .env
+COMPOSE = docker compose -f src/docker-compose.yml
 
-all: up
+all: build up
 
 build:
-	$(COMPOSE) $(ENV) build
+	$(COMPOSE) build
 	
 up:
-	$(COMPOSE) $(ENV) up -d
+	$(COMPOSE) up -d --build
 
 down:
-	$(COMPOSE) $(ENV) down
+	$(COMPOSE) down
 
 start:
-	$(COMPOSE) $(ENV) start
+	$(COMPOSE) start
 
 stop:
-	$(COMPOSE) $(ENV) stop
+	$(COMPOSE) stop
 
 restart:
-	$(COMPOSE) $(ENV) restart
+	$(COMPOSE) restart
 
 logs:
-	$(COMPOSE) $(ENV) logs
+	$(COMPOSE) logs
 
 clean:
-	$(COMPOSE) $(ENV) down
+	$(COMPOSE) down
 
 fclean:
-	$(COMPOSE) $(ENV) down -v --rmi all
+	$(COMPOSE) down -v --rmi all
 
 re: fclean all
 
