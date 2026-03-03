@@ -1,43 +1,17 @@
-user www-data;
-worker_processes auto;
-pid /run/nginx.pid;
+#!/bin/bash
+set -e
 
-events { worker_connections 1024; }
+# Crear directorio SSL si no existe
+mkdir -p /etc/nginx/ssl
 
-http {
-    include       /etc/nginx/mime.types;
-    default_type  application/octet-stream;
+if [ ! -f /etc/nginx/ssl/inception.key ] || [ ! -f /etc/nginx/ssl/inception.crt ]; then
+  echo "[NGINX] Generating self-signed certificate..."
+  openssl req -x509 -nodes -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/inception.key \
+    -out /etc/nginx/ssl/inception.crt \
+    -days 365 \
+    -subj "/C=ES/ST=Madrid/L=Madrid/O=42/OU=Inception/CN=sbolivar.42.fr"
+fi
 
-    sendfile on;
-    keepalive_timeout 65;
-
-    server {
-        listen 443 ssl;
-        server_name sbolivar.42.fr;
-
-        ssl_certificate     /etc/nginx/ssl/inception.crt;
-        ssl_certificate_key /etc/nginx/ssl/inception.key;
-
-        ssl_protocols TLSv1.2 TLSv1.3;
-
-        root /var/www/html;
-        index index.php;
-
-        location / {
-            try_files $uri $uri/ /index.php?$args;
-        }
-
-        location ~ \.php$ {
-            include fastcgi_params;
-            fastcgi_pass wordpress:9000;
-            fastcgi_index index.php;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        }
-
-        location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff2?)$ {
-            expires 7d;
-            add_header Cache-Control "public";
-            try_files $uri =404;
-        }
-    }
-}
+echo "[NGINX] Starting..."
+exec nginx -g "daemon off;"
