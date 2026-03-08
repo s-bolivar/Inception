@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by [your-login].*
+*This project has been created as part of the 42 curriculum by [sbolivar].*
 
 # Inception
 
@@ -19,9 +19,6 @@ All services are orchestrated via a single `docker-compose.yml`. Each container 
 
 **Virtual Machines vs Docker**
 VMs emulate an entire operating system, including the kernel, which makes them heavier and slower to start. Docker containers share the host kernel and isolate only the processes and filesystem, making them much more lightweight and faster to spin up. For this project, Docker is ideal since we want to run multiple isolated services without the overhead of full VMs.
-
-**Secrets vs Environment Variables**
-Environment variables are convenient but can be exposed through `docker inspect`, process listings, or logging. Docker secrets are mounted as files inside the container at runtime and are never stored in the image or visible in environment dumps. Sensitive values like database passwords are handled as secrets in this project.
 
 **Docker Network vs Host Network**
 With host networking, the container shares the host's network stack directly, which removes isolation and can cause port conflicts. A custom Docker bridge network (`inception`) is used here so containers can communicate with each other by name, while remaining isolated from the host and from each other unless explicitly connected.
