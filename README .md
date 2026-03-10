@@ -46,7 +46,7 @@ Bind mounts link a specific host directory to a container path, making them depe
 
 2. Configure your environment:
    ```bash
-   cp srcs/.env.example srcs/.env
+   cp srcs/.env
    # Fill in your values
    ```
 
